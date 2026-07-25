@@ -1,0 +1,110 @@
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class StudentGradeTracker {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // ArrayLists to dynamically store student names and their corresponding grades
+        ArrayList<String> studentNames = new ArrayList<>();
+        ArrayList<Double> studentGrades = new ArrayList<>();
+
+        System.out.println("--- Welcome to Student Grade Tracker ---");
+
+        // Main input loop
+        while (true) {
+            System.out.print("\nEnter student name (or type 'exit' to stop): ");
+            String name = sc.nextLine().trim();
+
+            // Exit condition check
+            if (name.equalsIgnoreCase("exit")) {
+                break;
+            }
+
+            // Skip empty inputs if user just presses Enter
+            if (name.isEmpty()) {
+                System.out.println("Name cannot be empty. Please try again.");
+                continue;
+            }
+
+            // Input validation loop for grades (prevents program crashes)
+            double grade = -1;
+            while (grade < 0 || grade > 100) {
+                System.out.print("Enter grade for " + name + " (0 - 100): ");
+                
+                // Check if user entered a valid number
+                if (sc.hasNextDouble()) {
+                    grade = sc.nextDouble();
+                    sc.nextLine(); // Clear scanner buffer after reading number
+                    
+                    if (grade < 0 || grade > 100) {
+                        System.out.println("Invalid grade! Please enter a value between 0 and 100.");
+                    }
+                } else {
+                    System.out.println("Invalid input! Please enter a valid numerical grade.");
+                    sc.nextLine(); // Clear invalid input from scanner
+                }
+            }
+
+            // Add valid inputs to lists
+            studentNames.add(name);
+            studentGrades.add(grade);
+            System.out.println("Grade added successfully!");
+        }
+
+        // Display summary only if data was entered
+        if (studentNames.isEmpty()) {
+            System.out.println("\nNo student data was entered.");
+        } else {
+            calculateAndShowReport(studentNames, studentGrades);
+        }
+
+        // Close scanner resource
+        sc.close();
+    }
+
+    // Method to calculate average, highest, and lowest scores and print report
+    public static void calculateAndShowReport(ArrayList<String> names, ArrayList<Double> grades) {
+        double sum = 0;
+        
+        // Initialize highest and lowest with the first student's grade
+        double highest = grades.get(0);
+        double lowest = grades.get(0);
+
+        String topStudent = names.get(0);
+        String lowestStudent = names.get(0);
+
+        // Loop through array lists to accumulate total and find max/min scores
+        for (int i = 0; i < grades.size(); i++) {
+            double currentGrade = grades.get(i);
+            sum += currentGrade;
+
+            // Check for new highest grade
+            if (currentGrade > highest) {
+                highest = currentGrade;
+                topStudent = names.get(i);
+            }
+
+            // Check for new lowest grade
+            if (currentGrade < lowest) {
+                lowest = currentGrade;
+                lowestStudent = names.get(i);
+            }
+        }
+
+        // Calculate average score
+        double average = sum / grades.size();
+
+        // Print final summary report
+        System.out.println("\n----------------------------------");
+        System.out.println("          SUMMARY REPORT          ");
+        System.out.println("----------------------------------");
+        System.out.println("Total Students : " + names.size());
+        System.out.println("Average Grade  : " + String.format("%.2f", average));
+        System.out.println("Highest Grade  : " + topStudent + " (" + highest + ")");
+        System.out.println("Lowest Grade   : " + lowestStudent + " (" + lowest + ")");
+        System.out.println("----------------------------------");
+    }
+}
